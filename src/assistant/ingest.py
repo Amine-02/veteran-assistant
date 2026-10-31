@@ -39,7 +39,7 @@ SUPERSEDED = {
 }
 
 HTML_COMMENT = re.compile(r"<!--.*?-->", re.DOTALL)
-ZERO_WIDTH = re.compile(r"[​‌‍⁠﻿]")
+ZERO_WIDTH = re.compile("[\u200b\u200c\u200d\u2060\ufeff]")
 INJECTION = re.compile(
     r"ignore (all )?(of )?(your |the )?(previous|prior|above) instructions"
     r"|system (notice|prompt|message)"

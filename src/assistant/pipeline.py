@@ -42,7 +42,7 @@ FALLBACK = ("I couldn't produce a verified answer to that. Please check VA.gov, 
 class Result:
     question: str
     redacted_question: str
-    behavior: str  # answer | not_covered | decline | crisis | refuse (+ pii_block flag)
+    behavior: str  # answer | not_covered | decline | crisis | refuse
     answer: str
     citations: list[str]
     route: str  # shortcut | S | M
@@ -137,6 +137,9 @@ class Assistant:
                          citations=cites, route="shortcut")
         else:
             res = self._answer(g.clean_text, persona, base, warn)
+        
+        if warn and "D23" not in res.citations:
+            res.citations = ["D23", *res.citations]
 
         res.latency_ms = int((time.perf_counter() - t0) * 1000)
         self._log(res, persona)
