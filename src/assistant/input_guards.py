@@ -16,7 +16,8 @@ CRISIS = re.compile(
     r"\b(suicid\w*|kill(ing)? (my|him|her|them)sel(f|ves)|end(ing)? (it|it all|my life)"
     r"|want(ed)? to die|better off dead|no reason to live|self[- ]?harm"
     r"|(don'?t|do not|can'?t) see the point( of (anything|living|life))?"
-    r"|hurt(ing)? myself|crisis line)\b",
+    r"|hurt(ing)? myself|crisis lin\w*"
+    r"|nobody (would|will|'?d) miss me|(i'?m|i am) not ok(ay)?|end it all)\b",
     re.IGNORECASE,
 )
 
@@ -52,7 +53,8 @@ REFUSE_REPLY = (
 CLAIM_LOOKUP = re.compile(
     r"\b(can|could|will|would) you\b.{0,40}\b(look ?up|check|pull up|find|access|see|update)\b"
     r".{0,30}\b(my|the) (claim|account|records?|file|status|appeal)"
-    r"|\b(check|look ?up|pull up) my (claim|account|records?|file|appeal)\b",
+    r"|\b(check|look ?up|pull up) my (claim|account|records?|file|appeal)\b"
+    r"|\[REDACTED_(SSN|VA_FILE_NUMBER)\].{0,40}\b(status|claim)\b",
     re.IGNORECASE,
 )
 # "How do I check my claim status?" is a how-to question, not a lookup request (Q07).
@@ -110,13 +112,12 @@ class GuardResult:
 def is_gibberish(text: str) -> bool:
     if not re.search(r"[a-z0-9]", text.lower()):
         return True
-    # Short tokens are skipped: "va", "gi", "dd214" are normal here.
     words = [w for w in re.findall(r"[a-z]+", text.lower()) if len(w) >= 4]
     if not words:
         return False
-    # Keyboard mash: most words have no vowel or a 4+ consonant run.
-    bad = [w for w in words if not VOWEL.search(w) or re.search(r"[^aeiouy\W]{4,}", w)]
-    return len(bad) / len(words) >= 0.5
+    bad = [w for w in words if not VOWEL.search(w) or re.search(r"[^aeiouy\W]{5,}", w)
+           or re.search(r"(\w)\1{3,}", w)]
+    return len(bad) / len(words) > 0.5
 
 
 def check_input(text: str) -> GuardResult:
