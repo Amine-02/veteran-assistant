@@ -19,7 +19,8 @@ Q02:
   behavior: answer
   must_retrieve: [D02]
   must_cite: [D02]
-  must_include: ["15", "2025|(may|might|likely|probably) (have )?(already )?expired", "confirm|check|contact"]
+  # Accepts "may have already expired" and "may already have expired".
+  must_include: ["15", "2025|(may|might|likely|probably) (already )?(have )?(already )?expired", "confirm|check|contact"]
   must_not_include: ["(do not|don't|won't) expire"]
 
 Q03:
