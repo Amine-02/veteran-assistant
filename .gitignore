@@ -1,0 +1,12 @@
+# uv environment (recreate with `uv sync`)
+.venv/
+
+# Python
+__pycache__/
+*.pyc
+
+# Redacted request log, regenerated on every run
+outputs/logs/
+
+# Secrets
+.env
