@@ -19,7 +19,7 @@ Two-part case study (AI Operations Analyst), open book, AI encouraged. Graded on
 | Part 1 diagram, notes, AI log | Done | User's Google Doc / Sheet |
 | Section A (A1-A3) | Drafted, user editing | User's Google Doc |
 | Section B (code) | Done, committed (9 commits, no remote yet) | This repo |
-| Section C (traffic mix, cost) | Built, text drafted. Hand check of 100 sample rows pending (user) | `src/analysis/`, `outputs/analysis/` |
+| Section C (traffic mix, cost) | Built, text drafted. 100-row sample pre-labeled by Claude, reviewed by the user (0 changes). Rules 99/100, Haiku 97/100 | `src/analysis/`, `outputs/analysis/` |
 | Section D, AI log rows for Part 2 | Not started | |
 
 Section B results: mock 8/15. Claude prompt 0dd319: 15, 14, 13 (avg 14.0). Prompt 3c225d (rule 9): 15/15 × 3. Run outputs were deleted and are not committed. Regenerate with `run_eval --repeat 3` if needed.
@@ -66,11 +66,12 @@ Open items:
 
 - Brief prices only (not real Anthropic prices). Tier S $0.25/$1.25, M $3/$15, L $15/$75 per 1M, cached input 10%, embeddings $0.10.
 - C1 (rules, all 4,000 queries): simple FAQ 78.1%, personalized 8.6%, sensitive 2.0% (crisis 33, PII 46), out of scope 6.3% (outcome 107, account 100, legal 44), junk 5.0% (injection 101, spam/gibberish 100). Haiku second opinion on 1,239 unique redacted texts: 97.2% agreement.
+- Reference sample: 100 distinct questions, pre-labeled by Claude, every row reviewed by the user, 0 labels changed. Rules agree 99/100, Haiku 97/100. Rule miss: "how long do i have to use my gi bill" (should be personalized).
 - Crisis: rules caught 33, Haiku found 3 typo variants the rules missed ("i want toe nd it all"), Haiku missed 1 the rules caught. Union caught all 36 known. Argument for regex + Tier S classifier together.
 - Gray area: "increase my va rating from 70%" (47): rules personalized, Haiku out of scope.
 - 1,239 unique texts = 306 distinct questions (typos merged). Pilot pack covers ~78% of in-scope questions by topic (state benefits, TRICARE/SGLI, pay, survivor/burial, ID/travel not covered).
-- C3 plan (brief profile): $1,209/month = S answers $352 + M answers $464 + M retries 5% $211 + classifier $14 + embeddings $4 + Tier L judge 0.5% $164. Baselines: all M $5,404, all L $27,004. Breaks budget only if Tier M share > 58% (480k) or > 20% (960k). Measured profile: $931. 185 distinct FAQ questions, top 100 = 93% of FAQ queries (answer cache upper bound). Hand-check sample = 100 distinct questions, labels pending.
-- Assumptions to flag: search queries ≠ chat turns (M share likely higher), 5% retry rate assumed, synthetic templated data.
+- C3 plan (brief profile): $1,209/month = S answers $352 + M answers $464 + M retries 5% $211 + classifier $14 + embeddings $4 + Tier L judge 0.5% $164. Baselines: all M $5,404, all L $27,004. Breaks budget only if Tier M share > 58% (480k) or > 20% (960k). Measured profile: $931. 185 distinct FAQ questions, top 100 = 93% of FAQ queries (answer cache upper bound).
+c- Assumptions to flag: search queries ≠ chat turns (M share likely higher), 5% retry rate assumed, synthetic templated data.
 - Prototype router (BM25 score rule) sends 8/12 eval calls to M. Production should route with the classifier / question features.
 
 ## Section D plan
