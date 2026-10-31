@@ -1,0 +1,18 @@
+{
+  "queries": 4000,
+  "sessions": 1987,
+  "shares": {
+    "simple_faq": 0.78125,
+    "personalized": 0.086,
+    "sensitive": 0.01975,
+    "out_of_scope": 0.06275,
+    "junk": 0.05025
+  },
+  "route": {
+    "simple_faq": "S",
+    "personalized": "M",
+    "sensitive": "none",
+    "out_of_scope": "none",
+    "junk": "none"
+  }
+}
