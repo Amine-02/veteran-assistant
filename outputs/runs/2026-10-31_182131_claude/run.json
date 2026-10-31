@@ -1,0 +1,25 @@
+{
+  "run_id": "2026-10-31_182131_claude",
+  "generator": "claude",
+  "as_of": "2026-10-07",
+  "git_commit": "ca8af54-dirty",
+  "system_prompt_sha": "3c225dd1461a",
+  "gold_sha": "7882fcc06953",
+  "questions": 15,
+  "model_calls": 12,
+  "tokens_by_model": {
+    "claude-sonnet-5-5": {
+      "input_tokens": 8969,
+      "output_tokens": 1489,
+      "cache_read_input_tokens": 6824,
+      "cache_creation_input_tokens": 0
+    },
+    "claude-haiku-5-5": {
+      "input_tokens": 4761,
+      "output_tokens": 759,
+      "cache_read_input_tokens": 3412,
+      "cache_creation_input_tokens": 0
+    }
+  },
+  "total_latency_ms": 23981
+}

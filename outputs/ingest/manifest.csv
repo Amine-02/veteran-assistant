@@ -1,0 +1,25 @@
+doc_id,title,source_type,last_reviewed,trust,freshness,status,hash,reasons,flags
+D01,Post-9/11 GI Bill: the basics,official,2025-03-01,1.0,1.0,indexed,86ea94cdef43,,
+D02,Forever GI Bill: time limits on using your benefit,official,2025-02-15,1.0,1.0,indexed,756ec6e1affc,,
+D03,GI Bill benefits: what every vet should know,editorial,2016-04-20,0.6,0.5,excluded,08299d680752,superseded_by:D02 (15-year limit no longer applies to post-2013 separations; eBenefits retired),stale:10y_since_review
+D04,Transferring GI Bill benefits to family members,official,2025-01-10,1.0,1.0,indexed,b3aaac23de0a,,
+D05,VA disability compensation: how it works,official,2025-02-20,1.0,1.0,indexed,71d472d246d7,,
+D06,How to file a VA claim and check your claim status,official,2025-06-02,1.0,1.0,indexed,8c047827517d,,
+D07,Check your claim status with eBenefits,editorial,2019-08-14,0.6,0.5,excluded,aeb8756030b6,superseded_by:D06 (claim status moved to VA.gov; eBenefits/DS Logon retired),stale:7y_since_review
+D08,VA health care: who can enroll,official,2025-01-30,1.0,1.0,indexed,c307e6785caf,,
+D09,PACT Act: toxic exposures and presumptive conditions,official,2025-04-11,1.0,1.0,indexed,9e3d7617633a,,
+D10,VA home loan benefit: basics,official,2025-04-02,1.0,1.0,indexed,3c48bd007e0b,,
+D11,Best VA loan rates this week - VetHomeDirect partner page,partner_scraped,2025-05-30,0.0,1.0,excluded,1683b9883bbc,untrusted_source_type:partner_scraped; prompt_injection_detected,hidden_html_comment_stripped
+D12,Veterans Crisis Line,official,2025-07-01,1.0,1.0,indexed,88c941b47233,,
+D13,Transition Assistance Program (TAP),official,2025-02-28,1.0,1.0,indexed,5f1a7634efa1,,
+D14,DoD SkillBridge,official,2025-03-04,1.0,1.0,indexed,e3b0d04e24ec,,
+D15,Translating your MOS into a civilian resume,editorial,2025-08-12,0.6,1.0,indexed,a34955aef660,,
+D16,Using the Military.com job board,first_party,2025-09-03,0.9,1.0,indexed,c245d942ed0d,,
+D17,Military discounts: how verification works,editorial,2025-06-20,0.6,1.0,indexed,236412494d8e,,
+D18,State veterans benefits: overview,editorial,2024-03-18,0.6,0.5,indexed,ddca323e1332,,stale:2y_since_review
+D19,Accredited representatives and VSOs: free help with claims,official,2025-02-12,1.0,1.0,indexed,f781ceefe97f,,
+D20,Thread: GI Bill is useless for trade school,community,2020-11-03,0.0,0.5,excluded,3190f750f531,untrusted_source_type:community,stale:5y_since_review
+D21,What the GI Bill can pay for,official,2025-01-20,1.0,1.0,indexed,ecc1e59e6758,,
+D22,Filing a VA claim (mirror),mirror_scraped,2025-06-02,0.0,1.0,excluded,8c047827517d,untrusted_source_type:mirror_scraped; duplicate_of:D06,
+D23,How the Military.com assistant uses your data,first_party,2025-09-01,0.9,1.0,indexed,bf3f3aa69e86,,
+D24,Dependents' Educational Assistance (DEA),official,2025-02-03,1.0,1.0,indexed,f8c0e4f4f541,,
