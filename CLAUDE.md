@@ -1,4 +1,4 @@
-# CLAUDE.md: Military.com case study
+# CLAUDE.md: Veteran assistant case study
 
 Handoff notes. Code details live in README.md and the code itself.
 
@@ -19,7 +19,7 @@ Two-part case study (AI Operations Analyst), open book, AI encouraged. Graded on
 | Part 1 diagram, notes, AI log | Done | User's Google Doc / Sheet |
 | Section A (A1-A3) | Drafted, user editing | User's Google Doc |
 | Section B (code) | Done, committed (9 commits, no remote yet) | This repo |
-| Section C (traffic mix, cost) | Next | `src/analysis/` |
+| Section C (traffic mix, cost) | Built, text drafted. Hand check of 100 sample rows pending (user) | `src/analysis/`, `outputs/analysis/` |
 | Section D, AI log rows for Part 2 | Not started | |
 
 Section B results: mock 8/15. Claude prompt 0dd319: 15, 14, 13 (avg 14.0). Prompt 3c225d (rule 9): 15/15 × 3. Run outputs were deleted and are not committed. Regenerate with `run_eval --repeat 3` if needed.
@@ -60,22 +60,18 @@ Open items:
 - Q09 dropped "PACT Act", Q07 dropped "Login.gov / ID.me" (vaguer than source, likely trimming to 120 words). Added generic prompt rule 9 (keep exact names). 14.0 → 15.0 avg, output tokens unchanged. gold.yaml not loosened.
 - Q02 regex bug in gold.yaml: required "may have already expired" word order, so "may already have expired" (correct) failed. Fixed pattern, rescored (free). Final: prompt 3c225d 15/15 × 3 (runs 2026-10-31_1821*).
 - BM25 ranks some expected docs 3rd-4th. No eval-specific synonyms added (would overfit).
+- Real search queries exposed guard bugs the eval missed: gibberish rule refused ~50 real questions ("healthcare", "months", "skillbridge" have 4 consonants in a row), crisis missed "nobody would miss me" / "i'm not ok", "aaaaaa" not junk, "va file number X status" not a lookup. Fixed (5+ consonants, repeated letters, new crisis phrases, identifier + status). Eval guard decisions unchanged.
 
-## Section C notes
+## Section C results
 
-Search queries: 4,000 queries, 1,987 sessions, Sept 2026, ~63% mobile, ~65% logged in. Contains PII (SSNs, phones), crisis, ~100 injection, ~80 junk, out-of-scope topics (TRICARE, SGLI, retirement pay, DIC, account requests, legal).
-
-C1 plan (`src/analysis/traffic_mix.py`): run all queries through the real guards and router, report shares by query and by session, hand-check ~100 rows and report agreement. Search queries are shorter than chat turns and have no persona, so Tier M is likely undercounted. Show a range.
-
-C3 plan (`src/analysis/cost_model.py`): shares × 480,000 turns × tokens × price.
-- Use the brief's assumed prices, not real Anthropic prices. Per 1M tokens: Tier S $0.25 / $1.25, Tier M $3 / $15, Tier L $15 / $75. Cached input 10% of the tier's input price (ignore write costs). Embeddings $0.10.
-- Brief profile: 3,310 input (900 cached system, 600 history, 1,750 retrieved, 60 user), 250 output, 80-token query embedding. Corpus 20,000 docs × 1,200 tokens, 10% refreshed monthly.
-- Quick check: Tier M turn = (900 × 0.30 + 2,410 × 3 + 250 × 15) / 1M = $0.01125 → $5,400/month (over budget). Tier L ×5 = $27,000. Tier S ≈ $450.
-- Measured in the prototype (prompt 3c225d, 3 runs): per model call ~1,120-1,190 uncached input + ~850 cached (system prompt) ≈ 2,000 input, ~180 output. No history, chunks ~150 tokens (pack docs are short). Route split on the 15 eval questions: 3 shortcut, 4 S, 8 M. Can justify a changed profile ("you may change these if you say why").
-- Hand review found Q14 naming "Ohio's Department of Veterans Services", not in the pack (D18 says "state's Department of Veterans Affairs"). Passed all checks. Regex eval can't catch unsupported details, needs a groundedness check.
-- Mapping in the write-up: Tier S ≈ Haiku, Tier M ≈ Sonnet, Tier L ≈ Opus. Prototype uses S and M only.
-- Router weakness: the multi-doc rule fires on most questions, so most calls go to Tier M. Tune it on traffic_mix.
-- C3 also asks: levers with quality risk of each, and what to change first if usage doubles. C2 asks a tier per stage (safety checks, routing, embeddings, re-ranking, generation, offline eval).
+- Brief prices only (not real Anthropic prices). Tier S $0.25/$1.25, M $3/$15, L $15/$75 per 1M, cached input 10%, embeddings $0.10.
+- C1 (rules, all 4,000 queries): simple FAQ 78.1%, personalized 8.6%, sensitive 2.0% (crisis 33, PII 46), out of scope 6.3% (outcome 107, account 100, legal 44), junk 5.0% (injection 101, spam/gibberish 100). Haiku second opinion on 1,239 unique redacted texts: 97.2% agreement.
+- Crisis: rules caught 33, Haiku found 3 typo variants the rules missed ("i want toe nd it all"), Haiku missed 1 the rules caught. Union caught all 36 known. Argument for regex + Tier S classifier together.
+- Gray area: "increase my va rating from 70%" (47): rules personalized, Haiku out of scope.
+- 1,239 unique texts = 306 distinct questions (typos merged). Pilot pack covers ~78% of in-scope questions by topic (state benefits, TRICARE/SGLI, pay, survivor/burial, ID/travel not covered).
+- C3 plan (brief profile): $1,209/month = S answers $352 + M answers $464 + M retries 5% $211 + classifier $14 + embeddings $4 + Tier L judge 0.5% $164. Baselines: all M $5,404, all L $27,004. Breaks budget only if Tier M share > 58% (480k) or > 20% (960k). Measured profile: $931. 185 distinct FAQ questions, top 100 = 93% of FAQ queries (answer cache upper bound). Hand-check sample = 100 distinct questions, labels pending.
+- Assumptions to flag: search queries ≠ chat turns (M share likely higher), 5% retry rate assumed, synthetic templated data.
+- Prototype router (BM25 score rule) sends 8/12 eval calls to M. Production should route with the classifier / question features.
 
 ## Section D plan
 

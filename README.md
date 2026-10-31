@@ -1,6 +1,8 @@
 # Veteran Daily-Life Assistant (RAG prototype)
 
-Prototype for Part 2, Section B of the Military.com case study. It answers questions from veterans, service members and families using only the provided knowledge pack, and cites doc_ids.
+Prototype of an AI assistant for veterans, service members and families. It answers everyday benefits questions using only the provided knowledge pack, and cites doc_ids. The repo also holds the traffic and cost analysis for the launch plan.
+
+Results: 15/15 eval questions passed in 3 Claude runs (`outputs/runs/summary.md`). The planned model spend is about $1,200/month against a $3,500 budget (`outputs/analysis/cost_model.md`).
 
 ## How it works
 
@@ -48,6 +50,19 @@ Claude answers vary between runs, so report the pass rate over several runs. Sta
 
 The answer key is `src/evaluation/gold.yaml`. Each question checks the reply type, required citations, required and forbidden content, retrieval, PII handling and which profile fields were sent.
 
+## Traffic and cost analysis
+
+```
+uv run python -m src.analysis            # whole analysis: traffic mix, then cost model
+uv run python -m src.analysis --no-llm   # same, rules only (free)
+```
+
+The traffic mix labels the 4,000 search queries with rules that reuse the assistant's guards. If an API key is set, Claude Haiku labels them too as a second opinion (~$0.05 the first time, then cached). Queries are redacted before any are sent. The cost model then turns the shares into monthly spend with the brief's prices.
+
+Hand check: fill in `your_category` in `outputs/analysis/hand_check_sample.csv` and re-run. The agreement is added to `traffic_mix.md`. The sample is fixed and never overwritten.
+
+Each step can also run alone: `python -m src.analysis.traffic_mix [--llm]`, `python -m src.analysis.cost_model`.
+
 ## Outputs
 
 ```
@@ -61,6 +76,12 @@ outputs/
       answers.md, answers.json  the answers and how each was produced
       scores.md, scores.json    every check, per question
       run.json                  generator, tokens, git commit, prompt and gold hashes
+  analysis/
+    traffic_mix.md              C1 shares, breakdown, topics, rules vs Haiku agreement
+    traffic_mix.csv             every query (redacted) with its labels
+    hand_check_sample.csv       100 unique queries to label by hand
+    model_choices.md            C2 model tier per stage, why, and cost
+    cost_model.md               C3 per-turn costs, baselines, plan, sensitivity
   logs/
     request_log.jsonl           redacted log of every request (not committed)
 ```
@@ -80,12 +101,12 @@ src/assistant/       the request path
   generate.py          prompt, Claude call, mock
   pipeline.py          routing, profile, date facts, wiring, logging
 src/evaluation/      gold.yaml, run_eval.py, score.py
-src/analysis/        Section C scripts (traffic mix, cost model), not built yet
+src/analysis/        traffic_mix.py (C1), cost_model.py (C2 + C3)
 ```
 
 ## Known limits
 
-- Guards are regexes. They miss rephrased cases. Production would add a small classifier on top.
+- Guards are regexes. On the search queries they missed 3 of 36 crisis messages, all with typos. Production adds a small classifier on top.
 - BM25 matches exact words only. Some expected docs rank 3rd or 4th but are always in the top 5.
 - The router's multi-doc rule fires on most questions, so most model calls go to Sonnet. It needs tuning on real traffic.
 - No conversation memory. Each question is answered on its own.
